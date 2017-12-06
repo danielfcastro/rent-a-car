@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+  http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+	version="2.1">
+	<persistence-unit name="RentACar-persistence-unit"
+		transaction-type="JTA">
+		<description>Forge Persistence Unit</description>
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<jta-data-source>java:jboss/datasources/rentACar</jta-data-source>
+		<class>br.com.danielfcastro.model.Address</class>
+		<class>br.com.danielfcastro.model.AddressType</class>
+		<class>br.com.danielfcastro.model.Agency</class>
+		<class>br.com.danielfcastro.model.Branch</class>
+		<class>br.com.danielfcastro.model.BrandType</class>
+		<class>br.com.danielfcastro.model.City</class>
+		<class>br.com.danielfcastro.model.CityGeoLoc</class>
+		<class>br.com.danielfcastro.model.CityGeoLocPK</class>
+		<class>br.com.danielfcastro.model.Country</class>
+		<class>br.com.danielfcastro.model.Customer</class>
+		<class>br.com.danielfcastro.model.Employee</class>
+		<class>br.com.danielfcastro.model.FuelType</class>
+		<class>br.com.danielfcastro.model.ModelType</class>
+		<class>br.com.danielfcastro.model.Rent</class>
+		<class>br.com.danielfcastro.model.Reservation</class>
+		<class>br.com.danielfcastro.model.SiteType</class>
+		<class>br.com.danielfcastro.model.State</class>
+		<class>br.com.danielfcastro.model.Telephone</class>
+		<class>br.com.danielfcastro.model.TelephoneType</class>
+		<class>br.com.danielfcastro.model.Vehicle</class>
+		<class>br.com.danielfcastro.model.VehicleAccessory</class>
+		<class>br.com.danielfcastro.model.VehicleCategory</class>
+		<class>br.com.danielfcastro.model.VehicleType</class>
+		<properties>
+			<property name="hibernate.hbm2ddl.auto" value="validate" />
+			<property name="hibernate.show_sql" value="true" />
+			<property name="hibernate.format_sql" value="false" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect" />
+		</properties>
+	</persistence-unit>
+</persistence>
