@@ -1,9 +1,9 @@
 package br.com.danielfcastro.model;
 
 import java.io.Serializable;
+import javax.persistence.*;
 
-import javax.persistence.Entity;
-import javax.persistence.NamedQuery;
+import org.hibernate.annotations.GenericGenerator;
 
 
 /**
@@ -15,11 +15,27 @@ import javax.persistence.NamedQuery;
 public class Branch extends BaseModel implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	@Id
+	@GeneratedValue(generator = "UUID")
+	@GenericGenerator(
+		name = "UUID",
+		strategy = "org.hibernate.id.UUIDGenerator"
+	)
+	private String id;
+
 	private String agencyId;
 
 	private String name;
 
 	public Branch() {
+	}
+
+	public String getId() {
+		return this.id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getAgencyId() {

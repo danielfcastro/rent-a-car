@@ -2,7 +2,6 @@ package br.com.danielfcastro.resources;
 
 import java.util.List;
 
-import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -22,7 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.com.danielfcastro.model.Customer;
-import br.com.danielfcastro.repository.impl.CustomerRepositoryImpl;
+import br.com.danielfcastro.qualifier.CustomerQualifier;
+import br.com.danielfcastro.repository.IRepository;
 
 @Path("/customers")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -31,8 +31,8 @@ public class CustomerResource {
 	private static final Logger logger = LoggerFactory.getLogger(CustomerResource.class);
 	private static final String CONTENT_TYPE = "Content-Type";
 
-	@Inject
-	CustomerRepositoryImpl repository;
+	@CustomerQualifier
+	IRepository<Customer> repository;
 
 	@GET
 	@Path("/")
@@ -86,7 +86,7 @@ public class CustomerResource {
 				middleName, passportNumber);
 		String errorMessage = novo.checkNulls();
 		if (null == errorMessage) {
-			repository.add(novo);
+			repository.save(novo);
 		} else {
 			return Response.status(Response.Status.BAD_REQUEST).entity(errorMessage).build();
 		}

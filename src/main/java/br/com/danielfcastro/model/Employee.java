@@ -1,10 +1,9 @@
 package br.com.danielfcastro.model;
 
 import java.io.Serializable;
+import javax.persistence.*;
 
-import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
+import org.hibernate.annotations.GenericGenerator;
 
 
 /**
@@ -12,12 +11,17 @@ import javax.persistence.NamedQuery;
  * 
  */
 @Entity
-@NamedQueries({
-	@NamedQuery(name="Employee.findAll", query="SELECT e FROM Employee e"),
-	@NamedQuery(name="Employee.findById", query="SELECT e FROM Employee e WHERE id= :id")
-})
+@NamedQuery(name="Employee.findAll", query="SELECT e FROM Employee e")
 public class Employee extends BaseModel implements Serializable {
 	private static final long serialVersionUID = 1L;
+
+	@Id
+	@GeneratedValue(generator = "UUID")
+	@GenericGenerator(
+		name = "UUID",
+		strategy = "org.hibernate.id.UUIDGenerator"
+	)
+	private String id;
 
 	private String firstName;
 
@@ -36,16 +40,12 @@ public class Employee extends BaseModel implements Serializable {
 	public Employee() {
 	}
 
-	public Employee(String firstName, byte flagManager, String identificationDocument, String identificationtYPE,
-			String lastName, String managerId, String middleName) {
-		super();
-		this.firstName = firstName;
-		this.flagManager = flagManager;
-		this.identificationDocument = identificationDocument;
-		this.identificationtYPE = identificationtYPE;
-		this.lastName = lastName;
-		this.managerId = managerId;
-		this.middleName = middleName;
+	public String getId() {
+		return this.id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getFirstName() {
@@ -101,6 +101,18 @@ public class Employee extends BaseModel implements Serializable {
 	}
 
 	public void setMiddleName(String middleName) {
+		this.middleName = middleName;
+	}
+
+	public Employee(String firstName, byte flagManager, String identificationDocument, String identificationtYPE,
+			String lastName, String managerId, String middleName) {
+		super();
+		this.firstName = firstName;
+		this.flagManager = flagManager;
+		this.identificationDocument = identificationDocument;
+		this.identificationtYPE = identificationtYPE;
+		this.lastName = lastName;
+		this.managerId = managerId;
 		this.middleName = middleName;
 	}
 

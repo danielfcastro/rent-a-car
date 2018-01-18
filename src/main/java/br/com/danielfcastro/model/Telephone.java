@@ -17,6 +17,14 @@ import java.math.BigDecimal;
 public class Telephone extends BaseModel implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	@Id
+	@GeneratedValue(generator = "UUID")
+	@GenericGenerator(
+		name = "UUID",
+		strategy = "org.hibernate.id.UUIDGenerator"
+	)
+	private String id;
+
 	private String customerId;
 
 	private String employeeId;
@@ -26,6 +34,14 @@ public class Telephone extends BaseModel implements Serializable {
 	private BigDecimal telephoneNumber;
 
 	public Telephone() {
+	}
+
+	public String getId() {
+		return this.id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getCustomerId() {

@@ -17,6 +17,14 @@ import java.util.Date;
 public class Rent extends BaseModel implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	@Id
+	@GeneratedValue(generator = "UUID")
+	@GenericGenerator(
+		name = "UUID",
+		strategy = "org.hibernate.id.UUIDGenerator"
+	)
+	private String id;
+
 	private String customerId;
 
 	private int dailyRentFee;
@@ -42,6 +50,14 @@ public class Rent extends BaseModel implements Serializable {
 	private int totalRentDays;
 
 	public Rent() {
+	}
+
+	public String getId() {
+		return this.id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getCustomerId() {

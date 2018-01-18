@@ -1,22 +1,27 @@
 package br.com.danielfcastro.model;
 
 import java.io.Serializable;
+import javax.persistence.*;
 
-import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
+import org.hibernate.annotations.GenericGenerator;
+
 
 /**
  * The persistent class for the Address database table.
  * 
  */
 @Entity
-@NamedQueries({
-	@NamedQuery(name = "Address.findAll", query = "SELECT a FROM Address a"),
-	@NamedQuery(name = "Address.findById", query = "SELECT a FROM Address a WHERE id= :id")
-})
+@NamedQuery(name="Address.findAll", query="SELECT a FROM Address a")
 public class Address extends BaseModel implements Serializable {
 	private static final long serialVersionUID = 1L;
+
+	@Id
+	@GeneratedValue(generator = "UUID")
+	@GenericGenerator(
+		name = "UUID",
+		strategy = "org.hibernate.id.UUIDGenerator"
+	)
+	private String id;
 
 	private int addressType;
 
@@ -41,23 +46,14 @@ public class Address extends BaseModel implements Serializable {
 	private String zipcode;
 
 	public Address() {
-		
 	}
 
-	public Address(int addressType, String city, String complement, int countryId, int customerId, int employeeId,
-			int number, String state, String streetName, String typeSite, String zipcode) {
-		super();
-		this.addressType = addressType;
-		this.city = city;
-		this.complement = complement;
-		this.countryId = countryId;
-		this.customerId = customerId;
-		this.employeeId = employeeId;
-		this.number = number;
-		this.state = state;
-		this.streetName = streetName;
-		this.typeSite = typeSite;
-		this.zipcode = zipcode;
+	public String getId() {
+		return this.id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public int getAddressType() {
@@ -145,6 +141,22 @@ public class Address extends BaseModel implements Serializable {
 	}
 
 	public void setZipcode(String zipcode) {
+		this.zipcode = zipcode;
+	}
+
+	public Address(int addressType, String city, String complement, int countryId, int customerId, int employeeId,
+			int number, String state, String streetName, String typeSite, String zipcode) {
+		super();
+		this.addressType = addressType;
+		this.city = city;
+		this.complement = complement;
+		this.countryId = countryId;
+		this.customerId = customerId;
+		this.employeeId = employeeId;
+		this.number = number;
+		this.state = state;
+		this.streetName = streetName;
+		this.typeSite = typeSite;
 		this.zipcode = zipcode;
 	}
 

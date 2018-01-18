@@ -3,8 +3,6 @@ package br.com.danielfcastro.model;
 import java.io.Serializable;
 import javax.persistence.*;
 
-import org.hibernate.annotations.GenericGenerator;
-
 /**
  * The primary key class for the CityGeoLoc database table.
  * 
@@ -14,9 +12,6 @@ public class CityGeoLocPK implements Serializable {
 	//default serial version id, required for serializable classes.
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(generator="system-uuid")
-	@GenericGenerator(name="system-uuid", strategy = "uuid")
 	private String id;
 
 	private int zipCode;

@@ -1,10 +1,9 @@
 package br.com.danielfcastro.model;
 
 import java.io.Serializable;
+import javax.persistence.*;
 
-import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
+import org.hibernate.annotations.GenericGenerator;
 
 
 /**
@@ -12,21 +11,29 @@ import javax.persistence.NamedQuery;
  * 
  */
 @Entity
-@NamedQueries({
-	@NamedQuery(name="AddressType.findAll", query="SELECT a FROM AddressType a"),
-	@NamedQuery(name="AddressType.findById", query="SELECT a FROM AddressType a WHERE id= :id")
-})
+@NamedQuery(name="AddressType.findAll", query="SELECT a FROM AddressType a")
 public class AddressType extends BaseModel implements Serializable {
 	private static final long serialVersionUID = 1L;
+
+	@Id
+	@GeneratedValue(generator = "UUID")
+	@GenericGenerator(
+		name = "UUID",
+		strategy = "org.hibernate.id.UUIDGenerator"
+	)
+	private String id;
 
 	private String name;
 
 	public AddressType() {
 	}
 
-	public AddressType(String name) {
-		super();
-		this.name = name;
+	public String getId() {
+		return this.id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getName() {
@@ -34,6 +41,11 @@ public class AddressType extends BaseModel implements Serializable {
 	}
 
 	public void setName(String name) {
+		this.name = name;
+	}
+
+	public AddressType(String name) {
+		super();
 		this.name = name;
 	}
 

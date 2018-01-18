@@ -1,6 +1,6 @@
 /*
 SQLyog Community v12.11 (64 bit)
-MySQL - 5.5.3-m3-log : Database - rent-a-car
+MySQL - 5.5.3-m3-log : Database - daniel
 *********************************************************************
 */
 
@@ -12,9 +12,9 @@ MySQL - 5.5.3-m3-log : Database - rent-a-car
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`rent-a-car` /*!40100 DEFAULT CHARACTER SET latin1 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`daniel` /*!40100 DEFAULT CHARACTER SET latin1 */;
 
-USE `rent-a-car`;
+USE `daniel`;
 
 /*Table structure for table `Address` */
 

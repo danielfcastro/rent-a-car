@@ -11,13 +11,17 @@ import org.hibernate.annotations.GenericGenerator;
  * 
  */
 @Entity
-
-@NamedQueries({
-	@NamedQuery(name="Country.findAll", query="SELECT c FROM Country c"),
-	@NamedQuery(name="Country.findById", query="SELECT c FROM Country c where id= :id")
-})
+@NamedQuery(name="Country.findAll", query="SELECT c FROM Country c")
 public class Country extends BaseModel implements Serializable {
 	private static final long serialVersionUID = 1L;
+
+	@Id
+	@GeneratedValue(generator = "UUID")
+	@GenericGenerator(
+		name = "UUID",
+		strategy = "org.hibernate.id.UUIDGenerator"
+	)
+	private String id;
 
 	private String iso;
 
@@ -34,14 +38,12 @@ public class Country extends BaseModel implements Serializable {
 	public Country() {
 	}
 
-	public Country(String iso, String iso3, String name, String nicename, short numcode, int phonecode) {
-		super();
-		this.iso = iso;
-		this.iso3 = iso3;
-		this.name = name;
-		this.nicename = nicename;
-		this.numcode = numcode;
-		this.phonecode = phonecode;
+	public String getId() {
+		return this.id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getIso() {
@@ -89,6 +91,16 @@ public class Country extends BaseModel implements Serializable {
 	}
 
 	public void setPhonecode(int phonecode) {
+		this.phonecode = phonecode;
+	}
+
+	public Country(String iso, String iso3, String name, String nicename, short numcode, int phonecode) {
+		super();
+		this.iso = iso;
+		this.iso3 = iso3;
+		this.name = name;
+		this.nicename = nicename;
+		this.numcode = numcode;
 		this.phonecode = phonecode;
 	}
 

@@ -11,12 +11,17 @@ import org.hibernate.annotations.GenericGenerator;
  * 
  */
 @Entity
-@NamedQueries({
-	@NamedQuery(name="Customer.findAll", query="SELECT c FROM Customer c"),
-	@NamedQuery(name="Customer.findById", query="SELECT c FROM Customer c WHERE id=: id")
-})
+@NamedQuery(name="Customer.findAll", query="SELECT c FROM Customer c")
 public class Customer extends BaseModel implements Serializable {
 	private static final long serialVersionUID = 1L;
+
+	@Id
+	@GeneratedValue(generator = "UUID")
+	@GenericGenerator(
+		name = "UUID",
+		strategy = "org.hibernate.id.UUIDGenerator"
+	)
+	private String id;
 
 	private String firstName;
 
@@ -33,15 +38,12 @@ public class Customer extends BaseModel implements Serializable {
 	public Customer() {
 	}
 
-	public Customer(String firstName, String identificationDocument, String identiicationType, String lastName,
-			String middleName, String passportNumber) {
-		super();
-		this.firstName = firstName;
-		this.identificationDocument = identificationDocument;
-		this.identiicationType = identiicationType;
-		this.lastName = lastName;
-		this.middleName = middleName;
-		this.passportNumber = passportNumber;
+	public String getId() {
+		return this.id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getFirstName() {
@@ -89,6 +91,17 @@ public class Customer extends BaseModel implements Serializable {
 	}
 
 	public void setPassportNumber(String passportNumber) {
+		this.passportNumber = passportNumber;
+	}
+
+	public Customer(String firstName, String identificationDocument, String identiicationType, String lastName,
+			String middleName, String passportNumber) {
+		super();
+		this.firstName = firstName;
+		this.identificationDocument = identificationDocument;
+		this.identiicationType = identiicationType;
+		this.lastName = lastName;
+		this.middleName = middleName;
 		this.passportNumber = passportNumber;
 	}
 

@@ -2,15 +2,22 @@ package br.com.danielfcastro.repository;
 
 import java.util.List;
 
-public interface IRepository<T> {
+import javax.transaction.Transactional;
+
+public interface IRepository <T>{
+
+	@Transactional(Transactional.TxType.REQUIRED)
+	public void save(T element);
 	
-    void add(T item);
+	@Transactional(Transactional.TxType.REQUIRED)
+	public void update(T element);
+	
+	@Transactional(Transactional.TxType.REQUIRED)
+	public void remove(T element);
 
-    void update(T item);
+	@Transactional(Transactional.TxType.REQUIRED)
+	public void remove(String id);
 
-    void remove(T item);
-
-    void remove(String  id);
-
-    List<T> query(String  id);
+	@Transactional(Transactional.TxType.SUPPORTS)
+	public List<T> query(String id);	
 }

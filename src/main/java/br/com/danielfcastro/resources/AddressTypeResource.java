@@ -2,7 +2,6 @@ package br.com.danielfcastro.resources;
 
 import java.util.List;
 
-import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -22,7 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.com.danielfcastro.model.AddressType;
-import br.com.danielfcastro.repository.impl.AddressTypeRepositoryImpl;
+import br.com.danielfcastro.qualifier.AddressTypeQualifier;
+import br.com.danielfcastro.repository.IRepository;
 
 @Path("/addresstypes")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -31,8 +31,8 @@ public class AddressTypeResource {
 	private static final Logger logger = LoggerFactory.getLogger(AddressTypeResource.class);
 	private static final String CONTENT_TYPE = "Content-Type";
 
-	@Inject
-	AddressTypeRepositoryImpl repository;
+	@AddressTypeQualifier
+	IRepository<AddressType> repository;
 
 	@GET
 	@Path("/")
@@ -80,7 +80,7 @@ public class AddressTypeResource {
 		AddressType novo = new AddressType(name);
 		String errorMessage = novo.checkNulls();
 		if (null == errorMessage) {
-			repository.add(novo);
+			repository.save(novo);
 		} else {
 			return Response.status(Response.Status.BAD_REQUEST).entity(errorMessage).build();
 		}

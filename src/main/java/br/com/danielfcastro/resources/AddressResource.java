@@ -2,7 +2,6 @@ package br.com.danielfcastro.resources;
 
 import java.util.List;
 
-import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -22,8 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.com.danielfcastro.model.Address;
-import br.com.danielfcastro.model.BaseModel;
-import br.com.danielfcastro.repository.impl.AddressRepositoryImpl;
+import br.com.danielfcastro.qualifier.AddressQualifier;
+import br.com.danielfcastro.repository.IRepository;
 
 @Path("/addresses")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -32,8 +31,8 @@ public class AddressResource {
 	private static final Logger logger = LoggerFactory.getLogger(AddressResource.class);
 	private static final String CONTENT_TYPE = "Content-Type";
 
-	@Inject
-	AddressRepositoryImpl repository;
+	@AddressQualifier
+	IRepository<Address> repository;
 
 	@GET
 	@Path("/")
@@ -87,11 +86,11 @@ public class AddressResource {
 			@QueryParam("typeSite") String typeSite,
 			@QueryParam("zipcode") String zipcode) {
 		logger.info("Início");
-		BaseModel novo = new Address(addressType, city, complement, countryId, customerId, employeeId,
+		Address novo = new Address(addressType, city, complement, countryId, customerId, employeeId,
 				number, state, streetName, typeSite, zipcode);
 		String errorMessage = novo.checkNulls(); 
 		if (null == errorMessage) {
-			repository.add(novo);	
+			repository.save(novo);	
 		}else {
 			return Response.status(Response.Status.BAD_REQUEST).entity(errorMessage).build();
 		}

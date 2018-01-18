@@ -2,7 +2,6 @@ package br.com.danielfcastro.resources;
 
 import java.util.List;
 
-import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -22,7 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.com.danielfcastro.model.Employee;
-import br.com.danielfcastro.repository.impl.EmployeeRepositoryImpl;
+import br.com.danielfcastro.qualifier.EmployeeQualifier;
+import br.com.danielfcastro.repository.IRepository;
 
 @Path("/employees")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -31,8 +31,8 @@ public class EmployeeResource {
 	private static final Logger logger = LoggerFactory.getLogger(EmployeeResource.class);
 	private static final String CONTENT_TYPE = "Content-Type";
 
-	@Inject
-	EmployeeRepositoryImpl repository;
+	@EmployeeQualifier
+	IRepository<Employee> repository;
 
 	@GET
 	@Path("/")
@@ -87,7 +87,7 @@ public class EmployeeResource {
 				lastName, managerId, middleName);
 		String errorMessage = novo.checkNulls();
 		if (null == errorMessage) {
-			repository.add(novo);
+			repository.save(novo);
 		} else {
 			return Response.status(Response.Status.BAD_REQUEST).entity(errorMessage).build();
 		}

@@ -17,6 +17,14 @@ import java.math.BigDecimal;
 public class City extends BaseModel implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	@Id
+	@GeneratedValue(generator = "UUID")
+	@GenericGenerator(
+		name = "UUID",
+		strategy = "org.hibernate.id.UUIDGenerator"
+	)
+	private String id;
+
 	private String countryId;
 
 	private BigDecimal latitude;
@@ -30,6 +38,14 @@ public class City extends BaseModel implements Serializable {
 	private int zipCode;
 
 	public City() {
+	}
+
+	public String getId() {
+		return this.id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getCountryId() {

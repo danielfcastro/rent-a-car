@@ -1,9 +1,9 @@
 package br.com.danielfcastro.model;
 
 import java.io.Serializable;
+import javax.persistence.*;
 
-import javax.persistence.Entity;
-import javax.persistence.NamedQuery;
+import org.hibernate.annotations.GenericGenerator;
 
 
 /**
@@ -14,6 +14,14 @@ import javax.persistence.NamedQuery;
 @NamedQuery(name="Vehicle.findAll", query="SELECT v FROM Vehicle v")
 public class Vehicle extends BaseModel implements Serializable {
 	private static final long serialVersionUID = 1L;
+
+	@Id
+	@GeneratedValue(generator = "UUID")
+	@GenericGenerator(
+		name = "UUID",
+		strategy = "org.hibernate.id.UUIDGenerator"
+	)
+	private String id;
 
 	private String branchId;
 
@@ -36,6 +44,14 @@ public class Vehicle extends BaseModel implements Serializable {
 	private String vehicleTypeId;
 
 	public Vehicle() {
+	}
+
+	public String getId() {
+		return this.id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getBranchId() {

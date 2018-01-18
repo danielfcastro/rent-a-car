@@ -2,7 +2,6 @@ package br.com.danielfcastro.resources;
 
 import java.util.List;
 
-import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -22,7 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.com.danielfcastro.model.Country;
-import br.com.danielfcastro.repository.impl.CountryRepositoryImpl;
+import br.com.danielfcastro.qualifier.CountryQualifier;
+import br.com.danielfcastro.repository.IRepository;
 
 @Path("/countries")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -31,8 +31,8 @@ public class CountryResource {
 	private static final Logger logger = LoggerFactory.getLogger(CountryResource.class);
 	private static final String CONTENT_TYPE = "Content-Type";
 
-	@Inject
-	CountryRepositoryImpl repository;
+	@CountryQualifier
+	IRepository<Country> repository;
 
 	@GET
 	@Path("/")
@@ -82,7 +82,7 @@ public class CountryResource {
 		Country novo = new Country(iso, iso3, name, nicename, numcode, phonecode);
 		String errorMessage = novo.checkNulls();
 		if (null == errorMessage) {
-			repository.add(novo);
+			repository.save(novo);
 		} else {
 			return Response.status(Response.Status.BAD_REQUEST).entity(errorMessage).build();
 		}

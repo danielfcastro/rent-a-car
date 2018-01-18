@@ -1,12 +1,11 @@
 package br.com.danielfcastro.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import javax.persistence.*;
 
-import javax.persistence.Entity;
-import javax.persistence.NamedQuery;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import org.hibernate.annotations.GenericGenerator;
+
+import java.util.Date;
 
 
 /**
@@ -17,6 +16,14 @@ import javax.persistence.TemporalType;
 @NamedQuery(name="Reservation.findAll", query="SELECT r FROM Reservation r")
 public class Reservation extends BaseModel implements Serializable {
 	private static final long serialVersionUID = 1L;
+
+	@Id
+	@GeneratedValue(generator = "UUID")
+	@GenericGenerator(
+		name = "UUID",
+		strategy = "org.hibernate.id.UUIDGenerator"
+	)
+	private String id;
 
 	private String agencyId;
 
@@ -34,6 +41,14 @@ public class Reservation extends BaseModel implements Serializable {
 	private Date returnDate;
 
 	public Reservation() {
+	}
+
+	public String getId() {
+		return this.id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getAgencyId() {
