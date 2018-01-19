@@ -27,6 +27,7 @@ import br.com.danielfcastro.dao.StateDAO;
 import br.com.danielfcastro.dao.TelephoneDAO;
 import br.com.danielfcastro.dao.TelephoneTypeDAO;
 import br.com.danielfcastro.dao.VehicleAccessoryDAO;
+import br.com.danielfcastro.dao.VehicleCategoryDAO;
 import br.com.danielfcastro.dao.VehicleDAO;
 import br.com.danielfcastro.dao.VehicleTypeDAO;
 import br.com.danielfcastro.qualifier.AddressQualifier;
@@ -45,8 +46,9 @@ import br.com.danielfcastro.qualifier.SiteTypeQualifier;
 import br.com.danielfcastro.qualifier.StateQualifier;
 import br.com.danielfcastro.qualifier.TelephoneQualifier;
 import br.com.danielfcastro.qualifier.TelephoneTypeQualifier;
-import br.com.danielfcastro.qualifier.VehicleQualifier;
 import br.com.danielfcastro.qualifier.VehicleAccessoryQualifier;
+import br.com.danielfcastro.qualifier.VehicleCategoryQualifier;
+import br.com.danielfcastro.qualifier.VehicleQualifier;
 import br.com.danielfcastro.qualifier.VehicleTypeQualifier;
 
 
@@ -205,6 +207,14 @@ public class RepositoryProducer implements Serializable{
         return new VehicleAccessoryDAO();
     }
 
+    @RequestScoped
+    @VehicleCategoryQualifier
+    @Default
+    @Produces
+    public IRepository createVehicleCategoryRepository() {
+        return new VehicleCategoryDAO();
+    }    
+    
     @RequestScoped
     @VehicleTypeQualifier
     @Default

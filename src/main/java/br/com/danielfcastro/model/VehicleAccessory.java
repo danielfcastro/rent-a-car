@@ -1,7 +1,12 @@
 package br.com.danielfcastro.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -45,4 +50,8 @@ public class VehicleAccessory extends BaseModel implements Serializable {
 		this.name = name;
 	}
 
+	public VehicleAccessory(String name) {
+		super();
+		this.name = name;
+	}
 }

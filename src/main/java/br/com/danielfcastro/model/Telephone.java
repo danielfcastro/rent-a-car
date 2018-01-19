@@ -1,11 +1,14 @@
 package br.com.danielfcastro.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
+import java.math.BigDecimal;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 
 import org.hibernate.annotations.GenericGenerator;
-
-import java.math.BigDecimal;
 
 
 /**
@@ -73,6 +76,14 @@ public class Telephone extends BaseModel implements Serializable {
 	}
 
 	public void setTelephoneNumber(BigDecimal telephoneNumber) {
+		this.telephoneNumber = telephoneNumber;
+	}
+
+	public Telephone(String customerId, String employeeId, String idTelephoneType, BigDecimal telephoneNumber) {
+		super();
+		this.customerId = customerId;
+		this.employeeId = employeeId;
+		this.idTelephoneType = idTelephoneType;
 		this.telephoneNumber = telephoneNumber;
 	}
 

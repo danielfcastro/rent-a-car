@@ -1,7 +1,11 @@
 package br.com.danielfcastro.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -41,6 +45,11 @@ public class BrandType extends BaseModel implements Serializable {
 	}
 
 	public void setBrand(String brand) {
+		this.brand = brand;
+	}
+
+	public BrandType(String brand) {
+		super();
 		this.brand = brand;
 	}
 

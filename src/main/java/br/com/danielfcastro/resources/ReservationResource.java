@@ -1,5 +1,6 @@
 package br.com.danielfcastro.resources;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -20,28 +21,28 @@ import org.jboss.resteasy.annotations.providers.jackson.Formatted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import br.com.danielfcastro.model.Employee;
-import br.com.danielfcastro.qualifier.EmployeeQualifier;
+import br.com.danielfcastro.model.Reservation;
+import br.com.danielfcastro.qualifier.ReservationQualifier;
 import br.com.danielfcastro.repository.IRepository;
 
-@Path("/employees")
+@Path("/reservation")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class EmployeeResource {
-	private static final Logger logger = LoggerFactory.getLogger(EmployeeResource.class);
+public class ReservationResource {
+	private static final Logger logger = LoggerFactory.getLogger(ReservationResource.class);
 	private static final String CONTENT_TYPE = "Content-Type";
 
-	@EmployeeQualifier
-	IRepository<Employee> repository;
+	@ReservationQualifier
+	IRepository<Reservation> repository;
 
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Formatted
-	public Response getEmployee() {
+	public Response getFueltype() {
 		logger.info("Início");
 		Response response = null;
-		List<Employee> entity = repository.query(null);
+		List<Reservation> entity = repository.query(null);
 		if (entity.size() != 0) {
 			response = Response.ok().entity(entity).build();
 		} else {
@@ -52,16 +53,16 @@ public class EmployeeResource {
 	}
 
 	@GET
-	@Path("/employee/{id}")
+	@Path("/reservation/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Formatted
-	public Response getEmployee(@PathParam("id") String id) {
+	public Response getFueltype(@PathParam("id") String id) {
 		logger.info("Início");
 		Response response = null;
 		if (id == null || id.trim().length() == 0) {
 			return Response.status(Response.Status.BAD_REQUEST).entity("id can not be null!").build();
 		}
-		List<Employee> entity = repository.query(id);
+		List<Reservation> entity = repository.query(id);
 		if (entity.size() != 0) {
 			response = Response.ok().entity(entity).build();
 		} else {
@@ -72,19 +73,14 @@ public class EmployeeResource {
 	}
 
 	@POST
-	@Path("/employee/")
+	@Path("/reservation/")
 	@Formatted
-	public Response addEmployee(@QueryParam("firstName") String firstName, 
-			@QueryParam("flagManager") byte flagManager, 
-			@QueryParam("identificationDocument") String identificationDocument, 
-			@QueryParam("identificationtYPE") String identificationtYPE,
-			@QueryParam("lastName") String lastName, 
-			@QueryParam("managerId") String managerId, 
-			@QueryParam("middleName") String middleName)
+	public Response addFueltype(@QueryParam("agencyId") String agencyId, @QueryParam("customerId") String customerId,
+			@QueryParam("pickupDate") Date pickupDate, @QueryParam("plateNumber") String plateNumber,
+			@QueryParam("reservationDate") Date reservationDate, @QueryParam("returnDate") Date returnDate)
 			throws IllegalArgumentException, IllegalAccessException {
 		logger.info("Início");
-		Employee novo = new Employee(firstName, flagManager, identificationDocument, identificationtYPE,
-				lastName, managerId, middleName);
+		Reservation novo = new Reservation(agencyId, customerId, pickupDate, plateNumber, reservationDate, returnDate);
 		String errorMessage = novo.checkNulls();
 		if (null == errorMessage) {
 			repository.save(novo);
@@ -93,26 +89,21 @@ public class EmployeeResource {
 		}
 
 		logger.info("Fim");
-		return Response.status(Response.Status.CREATED).entity("Employee inserted with success!").build();
+		return Response.status(Response.Status.CREATED).entity("Fueltype inserted with success!").build();
 	}
 
 	@PUT
-	@Path("/employee/{id}")
+	@Path("/reservation/{id}")
 	@Formatted
-	public Response updateEmployee(@PathParam("id") String id, @QueryParam("firstName") String firstName, 
-			@QueryParam("flagManager") byte flagManager, 
-			@QueryParam("identificationDocument") String identificationDocument, 
-			@QueryParam("identificationtYPE") String identificationtYPE,
-			@QueryParam("lastName") String lastName, 
-			@QueryParam("managerId") String managerId, 
-			@QueryParam("middleName") String middleName)
-			throws IllegalArgumentException, IllegalAccessException {
+	public Response updateFueltype(@PathParam("id") String id, @QueryParam("agencyId") String agencyId,
+			@QueryParam("customerId") String customerId, @QueryParam("pickupDate") Date pickupDate,
+			@QueryParam("plateNumber") String plateNumber, @QueryParam("reservationDate") Date reservationDate,
+			@QueryParam("returnDate") Date returnDate) throws IllegalArgumentException, IllegalAccessException {
 		logger.info("Início");
 		if (id == null || id.trim().length() == 0) {
 			return Response.status(Response.Status.BAD_REQUEST).entity("id não pode ser nulo!").build();
 		}
-		Employee novo = new Employee(firstName, flagManager, identificationDocument, identificationtYPE,
-				lastName, managerId, middleName);
+		Reservation novo = new Reservation(agencyId, customerId, pickupDate, plateNumber, reservationDate, returnDate);
 		novo.setId(id);
 		String errorMessage = novo.checkNulls();
 		if (null == errorMessage) {
@@ -122,20 +113,20 @@ public class EmployeeResource {
 			return Response.status(Response.Status.BAD_REQUEST).entity(errorMessage).build();
 		}
 		logger.info("Fim");
-		return Response.ok("Employee updated with success!", MediaType.APPLICATION_JSON).build();
+		return Response.ok("Fueltype updated with success!", MediaType.APPLICATION_JSON).build();
 	}
 
 	@DELETE
-	@Path("/employee/{id}")
+	@Path("/reservation/{id}")
 	@Formatted
-	public Response removeEmployee(@PathParam("id") String id) {
+	public Response removeFueltype(@PathParam("id") String id) {
 		logger.info("Início");
 		if (id == null || id.trim().length() == 0) {
 			return Response.status(Response.Status.BAD_REQUEST).entity("id não pode ser nulo!").build();
 		}
 		repository.remove(id);
 		logger.info("Fim");
-		return Response.ok("Employee removed with success!", MediaType.APPLICATION_JSON).build();
+		return Response.ok("Fueltype removed with success!", MediaType.APPLICATION_JSON).build();
 
 	}
 
@@ -165,7 +156,7 @@ public class EmployeeResource {
 	@Path("/")
 	public Response head() {
 		logger.info("Início");
-		Response retorno = Response.ok().header(EmployeeResource.CONTENT_TYPE, MediaType.APPLICATION_JSON).build();
+		Response retorno = Response.ok().header(ReservationResource.CONTENT_TYPE, MediaType.APPLICATION_JSON).build();
 		logger.info("Fim");
 		return retorno;
 	}

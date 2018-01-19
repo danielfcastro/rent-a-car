@@ -1,11 +1,16 @@
 package br.com.danielfcastro.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
+import java.util.Date;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.GenericGenerator;
-
-import java.util.Date;
 
 
 /**
@@ -96,6 +101,17 @@ public class Reservation extends BaseModel implements Serializable {
 	}
 
 	public void setReturnDate(Date returnDate) {
+		this.returnDate = returnDate;
+	}
+
+	public Reservation(String agencyId, String customerId, Date pickupDate, String plateNumber, Date reservationDate,
+			Date returnDate) {
+		super();
+		this.agencyId = agencyId;
+		this.customerId = customerId;
+		this.pickupDate = pickupDate;
+		this.plateNumber = plateNumber;
+		this.reservationDate = reservationDate;
 		this.returnDate = returnDate;
 	}
 

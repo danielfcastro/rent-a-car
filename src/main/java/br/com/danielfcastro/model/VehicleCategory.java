@@ -1,7 +1,11 @@
 package br.com.danielfcastro.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -70,6 +74,14 @@ public class VehicleCategory extends BaseModel implements Serializable {
 	}
 
 	public void setSeatNumbers(int seatNumbers) {
+		this.seatNumbers = seatNumbers;
+	}
+
+	public VehicleCategory(int averageLuggageQuantity, String idVehicleType, String name, int seatNumbers) {
+		super();
+		this.averageLuggageQuantity = averageLuggageQuantity;
+		this.idVehicleType = idVehicleType;
+		this.name = name;
 		this.seatNumbers = seatNumbers;
 	}
 

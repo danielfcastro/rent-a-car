@@ -1,7 +1,11 @@
 package br.com.danielfcastro.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -61,6 +65,13 @@ public class State extends BaseModel implements Serializable {
 	}
 
 	public void setName(String name) {
+		this.name = name;
+	}
+
+	public State(String countryId, String fu, String name) {
+		super();
+		this.countryId = countryId;
+		this.fu = fu;
 		this.name = name;
 	}
 

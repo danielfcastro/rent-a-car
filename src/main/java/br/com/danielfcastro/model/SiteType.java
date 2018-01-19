@@ -1,7 +1,11 @@
 package br.com.danielfcastro.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -61,6 +65,13 @@ public class SiteType extends BaseModel implements Serializable {
 	}
 
 	public void setSite(String site) {
+		this.site = site;
+	}
+
+	public SiteType(String abbreviation, String countryId, String site) {
+		super();
+		this.abbreviation = abbreviation;
+		this.countryId = countryId;
 		this.site = site;
 	}
 

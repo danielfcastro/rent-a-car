@@ -1,11 +1,14 @@
 package br.com.danielfcastro.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
+import java.math.BigDecimal;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 
 import org.hibernate.annotations.GenericGenerator;
-
-import java.math.BigDecimal;
 
 
 /**
@@ -93,6 +96,16 @@ public class City extends BaseModel implements Serializable {
 	}
 
 	public void setZipCode(int zipCode) {
+		this.zipCode = zipCode;
+	}
+
+	public City(String countryId, BigDecimal latitude, BigDecimal longitude, String name, String stateId, int zipCode) {
+		super();
+		this.countryId = countryId;
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.name = name;
+		this.stateId = stateId;
 		this.zipCode = zipCode;
 	}
 

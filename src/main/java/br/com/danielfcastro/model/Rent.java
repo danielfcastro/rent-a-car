@@ -1,11 +1,16 @@
 package br.com.danielfcastro.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
+import java.util.Date;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.GenericGenerator;
-
-import java.util.Date;
 
 
 /**
@@ -145,6 +150,22 @@ public class Rent extends BaseModel implements Serializable {
 	}
 
 	public void setTotalRentDays(int totalRentDays) {
+		this.totalRentDays = totalRentDays;
+	}
+
+	public Rent(String customerId, int dailyRentFee, int downPayment, String employeeId, int fuelCharge,
+			String plateNumber, int refund, Date rentDate, Date returnDate, int totalPaid, int totalRentDays) {
+		super();
+		this.customerId = customerId;
+		this.dailyRentFee = dailyRentFee;
+		this.downPayment = downPayment;
+		this.employeeId = employeeId;
+		this.fuelCharge = fuelCharge;
+		this.plateNumber = plateNumber;
+		this.refund = refund;
+		this.rentDate = rentDate;
+		this.returnDate = returnDate;
+		this.totalPaid = totalPaid;
 		this.totalRentDays = totalRentDays;
 	}
 

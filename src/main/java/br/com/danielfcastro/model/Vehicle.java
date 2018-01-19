@@ -1,7 +1,11 @@
 package br.com.danielfcastro.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -131,6 +135,21 @@ public class Vehicle extends BaseModel implements Serializable {
 	}
 
 	public void setVehicleTypeId(String vehicleTypeId) {
+		this.vehicleTypeId = vehicleTypeId;
+	}
+
+	public Vehicle(String branchId, String brandId, String conditionId, int dailyPrice, String fuelId,
+			int luggageSpaceVolume, String modelId, String plateNumber, int seatQuantity, String vehicleTypeId) {
+		super();
+		this.branchId = branchId;
+		this.brandId = brandId;
+		this.conditionId = conditionId;
+		this.dailyPrice = dailyPrice;
+		this.fuelId = fuelId;
+		this.luggageSpaceVolume = luggageSpaceVolume;
+		this.modelId = modelId;
+		this.plateNumber = plateNumber;
+		this.seatQuantity = seatQuantity;
 		this.vehicleTypeId = vehicleTypeId;
 	}
 

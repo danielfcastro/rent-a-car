@@ -1,7 +1,11 @@
 package br.com.danielfcastro.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -51,6 +55,12 @@ public class Branch extends BaseModel implements Serializable {
 	}
 
 	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Branch(String agencyId, String name) {
+		super();
+		this.agencyId = agencyId;
 		this.name = name;
 	}
 

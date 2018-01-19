@@ -1,7 +1,11 @@
 package br.com.danielfcastro.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -41,6 +45,11 @@ public class FuelType extends BaseModel implements Serializable {
 	}
 
 	public void setFuel(String fuel) {
+		this.fuel = fuel;
+	}
+
+	public FuelType(String fuel) {
+		super();
 		this.fuel = fuel;
 	}
 

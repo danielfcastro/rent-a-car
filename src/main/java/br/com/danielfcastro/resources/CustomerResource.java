@@ -111,6 +111,7 @@ public class CustomerResource {
 		}
 		Customer novo = new Customer(firstName, identificationDocument, identiicationType, lastName,
 				middleName, passportNumber);
+		novo.setId(id);
 		String errorMessage = novo.checkNulls();
 		if (null == errorMessage) {
 			novo.setId(id);

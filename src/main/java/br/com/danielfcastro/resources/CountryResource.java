@@ -103,6 +103,7 @@ public class CountryResource {
 			return Response.status(Response.Status.BAD_REQUEST).entity("id não pode ser nulo!").build();
 		}
 		Country novo = new Country(iso, iso3, name, nicename, numcode, phonecode);
+		novo.setId(id);
 		String errorMessage = novo.checkNulls();
 		if (null == errorMessage) {
 			novo.setId(id);

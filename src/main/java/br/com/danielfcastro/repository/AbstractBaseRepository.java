@@ -2,7 +2,6 @@ package br.com.danielfcastro.repository;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
-import java.util.UUID;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
