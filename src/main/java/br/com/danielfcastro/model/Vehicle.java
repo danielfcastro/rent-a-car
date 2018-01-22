@@ -2,6 +2,7 @@ package br.com.danielfcastro.model;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -25,26 +26,33 @@ public class Vehicle extends BaseModel implements Serializable {
 		name = "UUID",
 		strategy = "org.hibernate.id.UUIDGenerator"
 	)
+	@Column(columnDefinition = "char(36)")
 	private String id;
 
+	@Column(columnDefinition = "char(36)")
 	private String branchId;
 
+	@Column(columnDefinition = "char(36)")
 	private String brandId;
 
+	@Column(columnDefinition = "char(36)")
 	private String conditionId;
 
 	private int dailyPrice;
 
+	@Column(columnDefinition = "char(36)")
 	private String fuelId;
 
 	private int luggageSpaceVolume;
 
+	@Column(columnDefinition = "char(36)")
 	private String modelId;
 
 	private String plateNumber;
 
 	private int seatQuantity;
 
+	@Column(columnDefinition = "char(36)")
 	private String vehicleTypeId;
 
 	public Vehicle() {

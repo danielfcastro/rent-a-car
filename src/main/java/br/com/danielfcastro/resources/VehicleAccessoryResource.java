@@ -2,6 +2,7 @@ package br.com.danielfcastro.resources;
 
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -20,9 +21,8 @@ import org.jboss.resteasy.annotations.providers.jackson.Formatted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.com.danielfcastro.dao.VehicleAccessoryDAO;
 import br.com.danielfcastro.model.VehicleAccessory;
-import br.com.danielfcastro.qualifier.VehicleAccessoryQualifier;
-import br.com.danielfcastro.repository.IRepository;
 
 @Path("/vehicleaccessory")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -31,8 +31,8 @@ public class VehicleAccessoryResource {
 	private static final Logger logger = LoggerFactory.getLogger(VehicleAccessoryResource.class);
 	private static final String CONTENT_TYPE = "Content-Type";
 
-	@VehicleAccessoryQualifier
-	IRepository<VehicleAccessory> repository;
+	@Inject
+	VehicleAccessoryDAO repository;
 
 	@GET
 	@Path("/")
@@ -41,7 +41,7 @@ public class VehicleAccessoryResource {
 	public Response getFueltype() {
 		logger.info("Início");
 		Response response = null;
-		List<VehicleAccessory> entity = repository.query(null);
+		List<VehicleAccessory> entity = repository.query("VehicleAccessory.findAll");
 		if (entity.size() != 0) {
 			response = Response.ok().entity(entity).build();
 		} else {
@@ -71,14 +71,14 @@ public class VehicleAccessoryResource {
 		return response;
 	}
 
-	@POST
+	@PUT
 	@Path("/vehicleaccessory/")
 	@Formatted
 	public Response addFueltype(@QueryParam("name") String name)
 			throws IllegalArgumentException, IllegalAccessException {
 		logger.info("Início");
 		VehicleAccessory novo = new VehicleAccessory(name);
-		String errorMessage = novo.checkNulls();
+		String errorMessage = novo.checkNulls(true);
 		if (null == errorMessage) {
 			repository.save(novo);
 		} else {
@@ -89,7 +89,8 @@ public class VehicleAccessoryResource {
 		return Response.status(Response.Status.CREATED).entity("Fueltype inserted with success!").build();
 	}
 
-	@PUT
+	
+	@POST
 	@Path("/vehicleaccessory/{id}")
 	@Formatted
 	public Response updateFueltype(@PathParam("id") String id, @QueryParam("name") String name)
@@ -100,7 +101,7 @@ public class VehicleAccessoryResource {
 		}
 		VehicleAccessory novo = new VehicleAccessory(name);
 		novo.setId(id);
-		String errorMessage = novo.checkNulls();
+		String errorMessage = novo.checkNulls(false);
 		if (null == errorMessage) {
 			novo.setId(id);
 			repository.update(novo);

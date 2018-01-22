@@ -2,6 +2,7 @@ package br.com.danielfcastro.resources;
 
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -20,9 +21,8 @@ import org.jboss.resteasy.annotations.providers.jackson.Formatted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.com.danielfcastro.dao.AddressDAO;
 import br.com.danielfcastro.model.Address;
-import br.com.danielfcastro.qualifier.AddressQualifier;
-import br.com.danielfcastro.repository.IRepository;
 
 @Path("/addresses")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -31,8 +31,8 @@ public class AddressResource {
 	private static final Logger logger = LoggerFactory.getLogger(AddressResource.class);
 	private static final String CONTENT_TYPE = "Content-Type";
 
-	@AddressQualifier
-	IRepository<Address> repository;
+	@Inject
+	AddressDAO repository;
 
 	@GET
 	@Path("/")
@@ -41,7 +41,7 @@ public class AddressResource {
 	public Response getAddresses() {
 		logger.info("Início");
 		Response response = null;
-		List<Address> entity = repository.query(null);
+		List<Address> entity = repository.query("Address.findAll");
 		if (entity.size() != 0) {
 			response = Response.ok().entity(entity).build();
 		} else {
@@ -71,7 +71,7 @@ public class AddressResource {
 		return response;
 	}
 
-	@POST
+	@PUT
 	@Path("/address/")
 	@Formatted
 	public Response addAddress(@QueryParam("addressType") int addressType,
@@ -88,7 +88,7 @@ public class AddressResource {
 		logger.info("Início");
 		Address novo = new Address(addressType, city, complement, countryId, customerId, employeeId,
 				number, state, streetName, typeSite, zipcode);
-		String errorMessage = novo.checkNulls(); 
+		String errorMessage = novo.checkNulls(true); 
 		if (null == errorMessage) {
 			repository.save(novo);	
 		}else {
@@ -99,7 +99,8 @@ public class AddressResource {
 		return Response.status(Response.Status.CREATED).entity("Address inserted with success!").build();
 	}
 
-	@PUT
+	
+	@POST
 	@Path("/{id}")
 	@Formatted
 	public Response updateAddress(@PathParam("id") String id,
@@ -121,6 +122,12 @@ public class AddressResource {
 		Address novo = new Address(addressType, city, complement, countryId, customerId, employeeId,
 				number, state, streetName, typeSite, zipcode);
 		novo.setId(id);
+		String errorMessage = novo.checkNulls(false); 
+		if (null == errorMessage) {
+			repository.save(novo);	
+		}else {
+			return Response.status(Response.Status.BAD_REQUEST).entity(errorMessage).build();
+		}		
 		repository.update(novo);
 		logger.info("Fim");
 		return Response.ok("Address updated with success!", MediaType.APPLICATION_JSON).build();

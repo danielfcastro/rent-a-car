@@ -2,6 +2,7 @@ package br.com.danielfcastro.resources;
 
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -20,9 +21,8 @@ import org.jboss.resteasy.annotations.providers.jackson.Formatted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.com.danielfcastro.dao.BranchDAO;
 import br.com.danielfcastro.model.Branch;
-import br.com.danielfcastro.qualifier.BranchQualifier;
-import br.com.danielfcastro.repository.IRepository;
 
 @Path("/branch")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -31,8 +31,8 @@ public class BranchResource {
 	private static final Logger logger = LoggerFactory.getLogger(BranchResource.class);
 	private static final String CONTENT_TYPE = "Content-Type";
 
-	@BranchQualifier
-	IRepository<Branch> repository;
+	@Inject
+	BranchDAO repository;
 
 	@GET
 	@Path("/")
@@ -41,7 +41,7 @@ public class BranchResource {
 	public Response getBranch() {
 		logger.info("Início");
 		Response response = null;
-		List<Branch> entity = repository.query(null);
+		List<Branch> entity = repository.query("Branch.findAll");
 		if (entity.size() != 0) {
 			response = Response.ok().entity(entity).build();
 		} else {
@@ -71,7 +71,8 @@ public class BranchResource {
 		return response;
 	}
 
-	@POST
+	
+	@PUT
 	@Path("/Branch/")
 	@Formatted
 	public Response addBranch(@QueryParam("name") String name, 
@@ -79,7 +80,7 @@ public class BranchResource {
 			throws IllegalArgumentException, IllegalAccessException {
 		logger.info("Início");
 		Branch novo = new Branch(name, agencyId);
-		String errorMessage = novo.checkNulls();
+		String errorMessage = novo.checkNulls(true);
 		if (null == errorMessage) {
 			repository.save(novo);
 		} else {
@@ -90,7 +91,7 @@ public class BranchResource {
 		return Response.status(Response.Status.CREATED).entity("Branch inserted with success!").build();
 	}
 
-	@PUT
+	@POST
 	@Path("/Branch/{id}")
 	@Formatted
 	public Response updateBranch(@PathParam("id") String id, @QueryParam("name") String name, 
@@ -102,7 +103,7 @@ public class BranchResource {
 		}
 		Branch novo = new Branch(name, agencyId);
 		novo.setId(id);
-		String errorMessage = novo.checkNulls();
+		String errorMessage = novo.checkNulls(false);
 		if (null == errorMessage) {
 			novo.setId(id);
 			repository.update(novo);

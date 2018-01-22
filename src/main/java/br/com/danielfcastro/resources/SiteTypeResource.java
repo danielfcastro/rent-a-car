@@ -2,6 +2,7 @@ package br.com.danielfcastro.resources;
 
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -20,9 +21,8 @@ import org.jboss.resteasy.annotations.providers.jackson.Formatted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.com.danielfcastro.dao.SiteTypeDAO;
 import br.com.danielfcastro.model.SiteType;
-import br.com.danielfcastro.qualifier.SiteTypeQualifier;
-import br.com.danielfcastro.repository.IRepository;
 
 @Path("/sitetype")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -31,8 +31,8 @@ public class SiteTypeResource {
 	private static final Logger logger = LoggerFactory.getLogger(SiteTypeResource.class);
 	private static final String CONTENT_TYPE = "Content-Type";
 
-	@SiteTypeQualifier
-	IRepository<SiteType> repository;
+	@Inject
+	SiteTypeDAO repository;
 
 	@GET
 	@Path("/")
@@ -41,7 +41,7 @@ public class SiteTypeResource {
 	public Response getFueltype() {
 		logger.info("Início");
 		Response response = null;
-		List<SiteType> entity = repository.query(null);
+		List<SiteType> entity = repository.query("SiteType.findAll");
 		if (entity.size() != 0) {
 			response = Response.ok().entity(entity).build();
 		} else {
@@ -71,7 +71,7 @@ public class SiteTypeResource {
 		return response;
 	}
 
-	@POST
+	@PUT
 	@Path("/sitetype/")
 	@Formatted
 	public Response addFueltype(@QueryParam("abbreviation") String abbreviation,
@@ -79,7 +79,7 @@ public class SiteTypeResource {
 			throws IllegalArgumentException, IllegalAccessException {
 		logger.info("Início");
 		SiteType novo = new SiteType(abbreviation, countryId, site);
-		String errorMessage = novo.checkNulls();
+		String errorMessage = novo.checkNulls(true);
 		if (null == errorMessage) {
 			repository.save(novo);
 		} else {
@@ -90,7 +90,8 @@ public class SiteTypeResource {
 		return Response.status(Response.Status.CREATED).entity("Fueltype inserted with success!").build();
 	}
 
-	@PUT
+	
+	@POST
 	@Path("/sitetype/{id}")
 	@Formatted
 	public Response updateFueltype(@PathParam("id") String id, @QueryParam("abbreviation") String abbreviation,
@@ -102,7 +103,7 @@ public class SiteTypeResource {
 		}
 		SiteType novo = new SiteType(abbreviation, countryId, site);
 		novo.setId(id);
-		String errorMessage = novo.checkNulls();
+		String errorMessage = novo.checkNulls(false);
 		if (null == errorMessage) {
 			novo.setId(id);
 			repository.update(novo);

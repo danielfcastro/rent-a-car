@@ -3,6 +3,7 @@ package br.com.danielfcastro.resources;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -21,9 +22,8 @@ import org.jboss.resteasy.annotations.providers.jackson.Formatted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.com.danielfcastro.dao.RentDAO;
 import br.com.danielfcastro.model.Rent;
-import br.com.danielfcastro.qualifier.RentQualifier;
-import br.com.danielfcastro.repository.IRepository;
 
 @Path("/rent")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -32,8 +32,8 @@ public class RentResource {
 	private static final Logger logger = LoggerFactory.getLogger(RentResource.class);
 	private static final String CONTENT_TYPE = "Content-Type";
 
-	@RentQualifier
-	IRepository<Rent> repository;
+	@Inject
+	RentDAO repository;
 
 	@GET
 	@Path("/")
@@ -42,7 +42,7 @@ public class RentResource {
 	public Response getFueltype() {
 		logger.info("Início");
 		Response response = null;
-		List<Rent> entity = repository.query(null);
+		List<Rent> entity = repository.query("Rent.findAll");
 		if (entity.size() != 0) {
 			response = Response.ok().entity(entity).build();
 		} else {
@@ -72,7 +72,7 @@ public class RentResource {
 		return response;
 	}
 
-	@POST
+	@PUT
 	@Path("/rent/")
 	@Formatted
 	public Response addFueltype(@QueryParam("customerId") String customerId,
@@ -85,7 +85,7 @@ public class RentResource {
 		logger.info("Início");
 		Rent novo = new Rent(customerId, dailyRentFee, downPayment, employeeId, fuelCharge, plateNumber, refund,
 				rentDate, returnDate, totalPaid, totalRentDays);
-		String errorMessage = novo.checkNulls();
+		String errorMessage = novo.checkNulls(true);
 		if (null == errorMessage) {
 			repository.save(novo);
 		} else {
@@ -96,7 +96,8 @@ public class RentResource {
 		return Response.status(Response.Status.CREATED).entity("Fueltype inserted with success!").build();
 	}
 
-	@PUT
+	
+	@POST
 	@Path("/rent/{id}")
 	@Formatted
 	public Response updateFueltype(@PathParam("id") String id, @QueryParam("customerId") String customerId,
@@ -113,7 +114,7 @@ public class RentResource {
 		Rent novo = new Rent(customerId, dailyRentFee, downPayment, employeeId, fuelCharge, plateNumber, refund,
 				rentDate, returnDate, totalPaid, totalRentDays);
 		novo.setId(id);
-		String errorMessage = novo.checkNulls();
+		String errorMessage = novo.checkNulls(false);
 		if (null == errorMessage) {
 			novo.setId(id);
 			repository.update(novo);

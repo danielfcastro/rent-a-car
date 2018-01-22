@@ -15,6 +15,10 @@ public abstract class AbstractBaseRepository<T> implements IRepository<T> {
 		super();
 	}
 	
+	public void setPersistentClass(Class persistentClass) {
+		this.persistentClass = persistentClass;
+	}
+
 	public AbstractBaseRepository(EntityManager manager) {
 		this.entityManager = manager;
 		this.persistentClass = (Class<T>) ((ParameterizedType) 
@@ -38,10 +42,14 @@ public abstract class AbstractBaseRepository<T> implements IRepository<T> {
 
 	@Transactional(Transactional.TxType.REQUIRED)
 	public void remove(String id) {
-		T toBeDelete = (T) entityManager.find((Class<T>) ((ParameterizedType) 
-			      getClass().getGenericSuperclass()).getActualTypeArguments()[0], id);
+		T toBeDelete = (T) entityManager.find(this.persistentClass, id);
 		entityManager.remove(toBeDelete);
 	}
 
+	@Transactional(Transactional.TxType.SUPPORTS)
+	public T list(String id) {
+		return (T) entityManager.find(this.persistentClass, id);
+	}	
+	
 	public abstract List<T> query(String id);
 }

@@ -2,6 +2,7 @@ package br.com.danielfcastro.resources;
 
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -20,9 +21,8 @@ import org.jboss.resteasy.annotations.providers.jackson.Formatted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.com.danielfcastro.dao.VehicleDAO;
 import br.com.danielfcastro.model.Vehicle;
-import br.com.danielfcastro.qualifier.VehicleQualifier;
-import br.com.danielfcastro.repository.IRepository;
 
 @Path("/vehicle")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -31,8 +31,8 @@ public class VehicleResource {
 	private static final Logger logger = LoggerFactory.getLogger(VehicleResource.class);
 	private static final String CONTENT_TYPE = "Content-Type";
 
-	@VehicleQualifier
-	IRepository<Vehicle> repository;
+	@Inject
+	VehicleDAO repository;
 
 	@GET
 	@Path("/")
@@ -41,7 +41,7 @@ public class VehicleResource {
 	public Response getFueltype() {
 		logger.info("Início");
 		Response response = null;
-		List<Vehicle> entity = repository.query(null);
+		List<Vehicle> entity = repository.query("Vehicle.findAll");
 		if (entity.size() != 0) {
 			response = Response.ok().entity(entity).build();
 		} else {
@@ -71,7 +71,7 @@ public class VehicleResource {
 		return response;
 	}
 
-	@POST
+	@PUT
 	@Path("/vehicle/")
 	@Formatted
 	public Response addFueltype(@QueryParam("branchId") String branchId, @QueryParam("brandId") String brandId,
@@ -83,7 +83,7 @@ public class VehicleResource {
 		logger.info("Início");
 		Vehicle novo = new Vehicle(branchId, brandId, conditionId, dailyPrice, fuelId, luggageSpaceVolume, modelId,
 				plateNumber, seatQuantity, vehicleTypeId);
-		String errorMessage = novo.checkNulls();
+		String errorMessage = novo.checkNulls(true);
 		if (null == errorMessage) {
 			repository.save(novo);
 		} else {
@@ -94,7 +94,8 @@ public class VehicleResource {
 		return Response.status(Response.Status.CREATED).entity("Fueltype inserted with success!").build();
 	}
 
-	@PUT
+	
+	@POST
 	@Path("/vehicle/{id}")
 	@Formatted
 	public Response updateFueltype(@PathParam("id") String id, @QueryParam("branchId") String branchId,
@@ -110,7 +111,7 @@ public class VehicleResource {
 		Vehicle novo = new Vehicle(branchId, brandId, conditionId, dailyPrice, fuelId, luggageSpaceVolume, modelId,
 				plateNumber, seatQuantity, vehicleTypeId);
 		novo.setId(id);
-		String errorMessage = novo.checkNulls();
+		String errorMessage = novo.checkNulls(false);
 		if (null == errorMessage) {
 			novo.setId(id);
 			repository.update(novo);

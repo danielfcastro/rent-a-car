@@ -2,6 +2,7 @@ package br.com.danielfcastro.resources;
 
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -20,9 +21,8 @@ import org.jboss.resteasy.annotations.providers.jackson.Formatted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.com.danielfcastro.dao.AgencyDAO;
 import br.com.danielfcastro.model.Agency;
-import br.com.danielfcastro.qualifier.AgencyQualifier;
-import br.com.danielfcastro.repository.IRepository;
 
 @Path("/agency")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -31,8 +31,8 @@ public class AgencyResource {
 	private static final Logger logger = LoggerFactory.getLogger(AgencyResource.class);
 	private static final String CONTENT_TYPE = "Content-Type";
 
-	@AgencyQualifier
-	IRepository<Agency> repository;
+	@Inject
+	AgencyDAO repository;
 
 	@GET
 	@Path("/")
@@ -41,7 +41,7 @@ public class AgencyResource {
 	public Response getAgency() {
 		logger.info("Início");
 		Response response = null;
-		List<Agency> entity = repository.query(null);
+		List<Agency> entity = repository.query("Agency.findAll");
 		if (entity.size() != 0) {
 			response = Response.ok().entity(entity).build();
 		} else {
@@ -71,14 +71,14 @@ public class AgencyResource {
 		return response;
 	}
 
-	@POST
+	@PUT
 	@Path("/Agency/")
 	@Formatted
 	public Response addAgency(@QueryParam("name") String name)
 			throws IllegalArgumentException, IllegalAccessException {
 		logger.info("Início");
 		Agency novo = new Agency(name);
-		String errorMessage = novo.checkNulls();
+		String errorMessage = novo.checkNulls(true);
 		if (null == errorMessage) {
 			repository.save(novo);
 		} else {
@@ -89,7 +89,8 @@ public class AgencyResource {
 		return Response.status(Response.Status.CREATED).entity("Agency inserted with success!").build();
 	}
 
-	@PUT
+	
+	@POST
 	@Path("/Agency/{id}")
 	@Formatted
 	public Response updateAgency(@QueryParam("id") String id, @QueryParam("name") String name)
@@ -100,7 +101,7 @@ public class AgencyResource {
 		}
 		Agency novo = new Agency(name);
 		novo.setId(id);
-		String errorMessage = novo.checkNulls();
+		String errorMessage = novo.checkNulls(false);
 		if (null == errorMessage) {
 			novo.setId(id);
 			repository.update(novo);

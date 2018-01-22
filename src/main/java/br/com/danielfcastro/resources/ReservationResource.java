@@ -3,6 +3,7 @@ package br.com.danielfcastro.resources;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -21,9 +22,8 @@ import org.jboss.resteasy.annotations.providers.jackson.Formatted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.com.danielfcastro.dao.ReservationDAO;
 import br.com.danielfcastro.model.Reservation;
-import br.com.danielfcastro.qualifier.ReservationQualifier;
-import br.com.danielfcastro.repository.IRepository;
 
 @Path("/reservation")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -32,8 +32,8 @@ public class ReservationResource {
 	private static final Logger logger = LoggerFactory.getLogger(ReservationResource.class);
 	private static final String CONTENT_TYPE = "Content-Type";
 
-	@ReservationQualifier
-	IRepository<Reservation> repository;
+	@Inject
+	ReservationDAO repository;
 
 	@GET
 	@Path("/")
@@ -42,7 +42,7 @@ public class ReservationResource {
 	public Response getFueltype() {
 		logger.info("Início");
 		Response response = null;
-		List<Reservation> entity = repository.query(null);
+		List<Reservation> entity = repository.query("Reservation.findAll");
 		if (entity.size() != 0) {
 			response = Response.ok().entity(entity).build();
 		} else {
@@ -72,7 +72,7 @@ public class ReservationResource {
 		return response;
 	}
 
-	@POST
+	@PUT
 	@Path("/reservation/")
 	@Formatted
 	public Response addFueltype(@QueryParam("agencyId") String agencyId, @QueryParam("customerId") String customerId,
@@ -81,7 +81,7 @@ public class ReservationResource {
 			throws IllegalArgumentException, IllegalAccessException {
 		logger.info("Início");
 		Reservation novo = new Reservation(agencyId, customerId, pickupDate, plateNumber, reservationDate, returnDate);
-		String errorMessage = novo.checkNulls();
+		String errorMessage = novo.checkNulls(true);
 		if (null == errorMessage) {
 			repository.save(novo);
 		} else {
@@ -92,7 +92,8 @@ public class ReservationResource {
 		return Response.status(Response.Status.CREATED).entity("Fueltype inserted with success!").build();
 	}
 
-	@PUT
+	
+	@POST
 	@Path("/reservation/{id}")
 	@Formatted
 	public Response updateFueltype(@PathParam("id") String id, @QueryParam("agencyId") String agencyId,
@@ -105,7 +106,7 @@ public class ReservationResource {
 		}
 		Reservation novo = new Reservation(agencyId, customerId, pickupDate, plateNumber, reservationDate, returnDate);
 		novo.setId(id);
-		String errorMessage = novo.checkNulls();
+		String errorMessage = novo.checkNulls(false);
 		if (null == errorMessage) {
 			novo.setId(id);
 			repository.update(novo);

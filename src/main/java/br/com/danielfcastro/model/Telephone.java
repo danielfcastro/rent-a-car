@@ -3,6 +3,7 @@ package br.com.danielfcastro.model;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -26,12 +27,16 @@ public class Telephone extends BaseModel implements Serializable {
 		name = "UUID",
 		strategy = "org.hibernate.id.UUIDGenerator"
 	)
+	@Column(columnDefinition = "char(36)")
 	private String id;
 
+	@Column(columnDefinition = "char(36)")
 	private String customerId;
 
+	@Column(columnDefinition = "char(36)")
 	private String employeeId;
 
+	@Column(columnDefinition = "char(36)")
 	private String idTelephoneType;
 
 	private BigDecimal telephoneNumber;

@@ -2,6 +2,7 @@ package br.com.danielfcastro.resources;
 
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -20,9 +21,8 @@ import org.jboss.resteasy.annotations.providers.jackson.Formatted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.com.danielfcastro.dao.CountryDAO;
 import br.com.danielfcastro.model.Country;
-import br.com.danielfcastro.qualifier.CountryQualifier;
-import br.com.danielfcastro.repository.IRepository;
 
 @Path("/countries")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -31,8 +31,8 @@ public class CountryResource {
 	private static final Logger logger = LoggerFactory.getLogger(CountryResource.class);
 	private static final String CONTENT_TYPE = "Content-Type";
 
-	@CountryQualifier
-	IRepository<Country> repository;
+	@Inject
+	CountryDAO repository;
 
 	@GET
 	@Path("/")
@@ -41,7 +41,7 @@ public class CountryResource {
 	public Response getCountry() {
 		logger.info("Início");
 		Response response = null;
-		List<Country> entity = repository.query(null);
+		List<Country> entity = repository.query("Country.findAll");
 		if (entity.size() != 0) {
 			response = Response.ok().entity(entity).build();
 		} else {
@@ -71,7 +71,7 @@ public class CountryResource {
 		return response;
 	}
 
-	@POST
+	@PUT
 	@Path("/country/")
 	@Formatted
 	public Response addCountry(@QueryParam("iso") String iso, @QueryParam("iso3") String iso3,
@@ -80,7 +80,7 @@ public class CountryResource {
 			throws IllegalArgumentException, IllegalAccessException {
 		logger.info("Início");
 		Country novo = new Country(iso, iso3, name, nicename, numcode, phonecode);
-		String errorMessage = novo.checkNulls();
+		String errorMessage = novo.checkNulls(true);
 		if (null == errorMessage) {
 			repository.save(novo);
 		} else {
@@ -91,7 +91,8 @@ public class CountryResource {
 		return Response.status(Response.Status.CREATED).entity("Country inserted with success!").build();
 	}
 
-	@PUT
+	
+	@POST
 	@Path("/country/{id}")
 	@Formatted
 	public Response updateCountry(@PathParam("id") String id, @QueryParam("iso") String iso, @QueryParam("iso3") String iso3,
@@ -104,7 +105,7 @@ public class CountryResource {
 		}
 		Country novo = new Country(iso, iso3, name, nicename, numcode, phonecode);
 		novo.setId(id);
-		String errorMessage = novo.checkNulls();
+		String errorMessage = novo.checkNulls(false);
 		if (null == errorMessage) {
 			novo.setId(id);
 			repository.update(novo);

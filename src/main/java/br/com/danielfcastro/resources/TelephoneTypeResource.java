@@ -2,6 +2,7 @@ package br.com.danielfcastro.resources;
 
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -20,9 +21,8 @@ import org.jboss.resteasy.annotations.providers.jackson.Formatted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.com.danielfcastro.dao.TelephoneTypeDAO;
 import br.com.danielfcastro.model.TelephoneType;
-import br.com.danielfcastro.qualifier.TelephoneTypeQualifier;
-import br.com.danielfcastro.repository.IRepository;
 
 @Path("/telephonetype")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -31,8 +31,8 @@ public class TelephoneTypeResource {
 	private static final Logger logger = LoggerFactory.getLogger(TelephoneTypeResource.class);
 	private static final String CONTENT_TYPE = "Content-Type";
 
-	@TelephoneTypeQualifier
-	IRepository<TelephoneType> repository;
+	@Inject
+	TelephoneTypeDAO repository;
 
 	@GET
 	@Path("/")
@@ -41,7 +41,7 @@ public class TelephoneTypeResource {
 	public Response getFueltype() {
 		logger.info("Início");
 		Response response = null;
-		List<TelephoneType> entity = repository.query(null);
+		List<TelephoneType> entity = repository.query("TelephoneType.findAll");
 		if (entity.size() != 0) {
 			response = Response.ok().entity(entity).build();
 		} else {
@@ -71,14 +71,14 @@ public class TelephoneTypeResource {
 		return response;
 	}
 
-	@POST
+	@PUT
 	@Path("/telephonetype/")
 	@Formatted
 	public Response addFueltype(@QueryParam("name") String name)
 			throws IllegalArgumentException, IllegalAccessException {
 		logger.info("Início");
 		TelephoneType novo = new TelephoneType(name);
-		String errorMessage = novo.checkNulls();
+		String errorMessage = novo.checkNulls(true);
 		if (null == errorMessage) {
 			repository.save(novo);
 		} else {
@@ -89,7 +89,8 @@ public class TelephoneTypeResource {
 		return Response.status(Response.Status.CREATED).entity("Fueltype inserted with success!").build();
 	}
 
-	@PUT
+	
+	@POST
 	@Path("/telephonetype/{id}")
 	@Formatted
 	public Response updateFueltype(@PathParam("id") String id, @QueryParam("name") String name)
@@ -100,7 +101,7 @@ public class TelephoneTypeResource {
 		}
 		TelephoneType novo = new TelephoneType(name);
 		novo.setId(id);
-		String errorMessage = novo.checkNulls();
+		String errorMessage = novo.checkNulls(false);
 		if (null == errorMessage) {
 			novo.setId(id);
 			repository.update(novo);

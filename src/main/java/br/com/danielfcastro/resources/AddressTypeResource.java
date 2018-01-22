@@ -2,6 +2,7 @@ package br.com.danielfcastro.resources;
 
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -20,9 +21,8 @@ import org.jboss.resteasy.annotations.providers.jackson.Formatted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.com.danielfcastro.dao.AddressTypeDAO;
 import br.com.danielfcastro.model.AddressType;
-import br.com.danielfcastro.qualifier.AddressTypeQualifier;
-import br.com.danielfcastro.repository.IRepository;
 
 @Path("/addresstypes")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -31,8 +31,8 @@ public class AddressTypeResource {
 	private static final Logger logger = LoggerFactory.getLogger(AddressTypeResource.class);
 	private static final String CONTENT_TYPE = "Content-Type";
 
-	@AddressTypeQualifier
-	IRepository<AddressType> repository;
+	@Inject
+	AddressTypeDAO repository;
 
 	@GET
 	@Path("/")
@@ -41,7 +41,7 @@ public class AddressTypeResource {
 	public Response getAddressTypeTypes() {
 		logger.info("Início");
 		Response response = null;
-		List<AddressType> entity = repository.query(null);
+		List<AddressType> entity = repository.query("AddressType.findAll");
 		if (entity.size() != 0) {
 			response = Response.ok().entity(entity).build();
 		} else {
@@ -61,8 +61,8 @@ public class AddressTypeResource {
 		if (id == null || id.trim().length() == 0) {
 			return Response.status(Response.Status.BAD_REQUEST).entity("id can not be null!").build();
 		}
-		List<AddressType> entity = repository.query(id);
-		if (entity.size() != 0) {
+		AddressType entity = repository.list(id);
+		if (null != entity) {
 			response = Response.ok().entity(entity).build();
 		} else {
 			response = Response.noContent().build();
@@ -71,15 +71,15 @@ public class AddressTypeResource {
 		return response;
 	}
 
-	@POST
-	@Path("/type/")
+	@PUT
+	@Path("/add/")
 	@Formatted
 	public Response addAddressType(@QueryParam("name") String name)
 			throws IllegalArgumentException, IllegalAccessException {
 		logger.info("Início");
 		AddressType novo = new AddressType(name);
-		String errorMessage = novo.checkNulls();
-		if (null == errorMessage) {
+		String errorMessage = novo.checkNulls(true);
+		if (errorMessage.length() == 0) {
 			repository.save(novo);
 		} else {
 			return Response.status(Response.Status.BAD_REQUEST).entity(errorMessage).build();
@@ -89,7 +89,7 @@ public class AddressTypeResource {
 		return Response.status(Response.Status.CREATED).entity("AddressType inserted with success!").build();
 	}
 
-	@PUT
+	@POST
 	@Path("/{id}")
 	@Formatted
 	public Response updateAddressType(@PathParam("id") String id, @QueryParam("name") String name) throws IllegalArgumentException, IllegalAccessException {
@@ -98,9 +98,9 @@ public class AddressTypeResource {
 			return Response.status(Response.Status.BAD_REQUEST).entity("id não pode ser nulo!").build();
 		}
 		AddressType novo = new AddressType(name);
-		String errorMessage = novo.checkNulls();
-		if (null == errorMessage) {
-			novo.setId(id);
+		novo.setId(id);
+		String errorMessage = novo.checkNulls(false);
+		if (errorMessage.length() == 0) {
 			repository.update(novo);
 		} else {
 			return Response.status(Response.Status.BAD_REQUEST).entity(errorMessage).build();

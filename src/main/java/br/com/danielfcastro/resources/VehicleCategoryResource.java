@@ -2,6 +2,7 @@ package br.com.danielfcastro.resources;
 
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -20,9 +21,8 @@ import org.jboss.resteasy.annotations.providers.jackson.Formatted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.com.danielfcastro.dao.VehicleCategoryDAO;
 import br.com.danielfcastro.model.VehicleCategory;
-import br.com.danielfcastro.qualifier.VehicleCategoryQualifier;
-import br.com.danielfcastro.repository.IRepository;
 
 @Path("/vehiclecategory")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -31,8 +31,8 @@ public class VehicleCategoryResource {
 	private static final Logger logger = LoggerFactory.getLogger(VehicleCategoryResource.class);
 	private static final String CONTENT_TYPE = "Content-Type";
 
-	@VehicleCategoryQualifier
-	IRepository<VehicleCategory> repository;
+	@Inject
+	VehicleCategoryDAO repository;
 
 	@GET
 	@Path("/")
@@ -41,7 +41,7 @@ public class VehicleCategoryResource {
 	public Response getFueltype() {
 		logger.info("Início");
 		Response response = null;
-		List<VehicleCategory> entity = repository.query(null);
+		List<VehicleCategory> entity = repository.query("VehicleCategory.findAll");
 		if (entity.size() != 0) {
 			response = Response.ok().entity(entity).build();
 		} else {
@@ -71,7 +71,8 @@ public class VehicleCategoryResource {
 		return response;
 	}
 
-	@POST
+	
+	@PUT
 	@Path("/vehiclecategory/")
 	@Formatted
 	public Response addFueltype(@QueryParam("averageLuggageQuantity") int averageLuggageQuantity,
@@ -80,7 +81,7 @@ public class VehicleCategoryResource {
 			throws IllegalArgumentException, IllegalAccessException {
 		logger.info("Início");
 		VehicleCategory novo = new VehicleCategory(averageLuggageQuantity, idVehicleType, name, seatNumbers);
-		String errorMessage = novo.checkNulls();
+		String errorMessage = novo.checkNulls(true);
 		if (null == errorMessage) {
 			repository.save(novo);
 		} else {
@@ -91,7 +92,7 @@ public class VehicleCategoryResource {
 		return Response.status(Response.Status.CREATED).entity("Fueltype inserted with success!").build();
 	}
 
-	@PUT
+	@POST
 	@Path("/vehiclecategory/{id}")
 	@Formatted
 	public Response updateFueltype(@PathParam("id") String id, @QueryParam("averageLuggageQuantity") int averageLuggageQuantity,
@@ -104,7 +105,7 @@ public class VehicleCategoryResource {
 		}
 		VehicleCategory novo = new VehicleCategory(averageLuggageQuantity, idVehicleType, name, seatNumbers);
 		novo.setId(id);
-		String errorMessage = novo.checkNulls();
+		String errorMessage = novo.checkNulls(false);
 		if (null == errorMessage) {
 			novo.setId(id);
 			repository.update(novo);

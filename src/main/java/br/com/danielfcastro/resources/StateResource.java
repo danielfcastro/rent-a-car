@@ -2,6 +2,7 @@ package br.com.danielfcastro.resources;
 
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -20,9 +21,8 @@ import org.jboss.resteasy.annotations.providers.jackson.Formatted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.com.danielfcastro.dao.StateDAO;
 import br.com.danielfcastro.model.State;
-import br.com.danielfcastro.qualifier.StateQualifier;
-import br.com.danielfcastro.repository.IRepository;
 
 @Path("/state")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -31,8 +31,8 @@ public class StateResource {
 	private static final Logger logger = LoggerFactory.getLogger(StateResource.class);
 	private static final String CONTENT_TYPE = "Content-Type";
 
-	@StateQualifier
-	IRepository<State> repository;
+	@Inject
+	StateDAO repository;
 
 	@GET
 	@Path("/")
@@ -41,7 +41,7 @@ public class StateResource {
 	public Response getFueltype() {
 		logger.info("Início");
 		Response response = null;
-		List<State> entity = repository.query(null);
+		List<State> entity = repository.query("State.findAll");
 		if (entity.size() != 0) {
 			response = Response.ok().entity(entity).build();
 		} else {
@@ -71,14 +71,14 @@ public class StateResource {
 		return response;
 	}
 
-	@POST
+	@PUT
 	@Path("/state/")
 	@Formatted
 	public Response addFueltype(@QueryParam("countryId") String countryId, @QueryParam("fu") String fu,
 			@QueryParam("name") String name) throws IllegalArgumentException, IllegalAccessException {
 		logger.info("Início");
 		State novo = new State(countryId, fu, name);
-		String errorMessage = novo.checkNulls();
+		String errorMessage = novo.checkNulls(true);
 		if (null == errorMessage) {
 			repository.save(novo);
 		} else {
@@ -89,7 +89,8 @@ public class StateResource {
 		return Response.status(Response.Status.CREATED).entity("Fueltype inserted with success!").build();
 	}
 
-	@PUT
+	
+	@POST
 	@Path("/state/{id}")
 	@Formatted
 	public Response updateFueltype(@PathParam("id") String id, @QueryParam("countryId") String countryId,
@@ -101,7 +102,7 @@ public class StateResource {
 		}
 		State novo = new State(countryId, fu, name);
 		novo.setId(id);
-		String errorMessage = novo.checkNulls();
+		String errorMessage = novo.checkNulls(false);
 		if (null == errorMessage) {
 			novo.setId(id);
 			repository.update(novo);

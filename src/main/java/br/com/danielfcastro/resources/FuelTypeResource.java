@@ -2,6 +2,7 @@ package br.com.danielfcastro.resources;
 
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -20,9 +21,8 @@ import org.jboss.resteasy.annotations.providers.jackson.Formatted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.com.danielfcastro.dao.FuelTypeDAO;
 import br.com.danielfcastro.model.FuelType;
-import br.com.danielfcastro.qualifier.FuelTypeQualifier;
-import br.com.danielfcastro.repository.IRepository;
 
 @Path("/fueltype")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -31,8 +31,8 @@ public class FuelTypeResource {
 	private static final Logger logger = LoggerFactory.getLogger(FuelTypeResource.class);
 	private static final String CONTENT_TYPE = "Content-Type";
 
-	@FuelTypeQualifier
-	IRepository<FuelType> repository;
+	@Inject
+	FuelTypeDAO repository;
 
 	@GET
 	@Path("/")
@@ -41,7 +41,7 @@ public class FuelTypeResource {
 	public Response getFueltype() {
 		logger.info("Início");
 		Response response = null;
-		List<FuelType> entity = repository.query(null);
+		List<FuelType> entity = repository.query("FuelType.findAll");
 		if (entity.size() != 0) {
 			response = Response.ok().entity(entity).build();
 		} else {
@@ -71,14 +71,14 @@ public class FuelTypeResource {
 		return response;
 	}
 
-	@POST
+	@PUT
 	@Path("/fueltype/")
 	@Formatted
 	public Response addFueltype(@QueryParam("name") String name)
 			throws IllegalArgumentException, IllegalAccessException {
 		logger.info("Início");
 		FuelType novo = new FuelType(name);
-		String errorMessage = novo.checkNulls();
+		String errorMessage = novo.checkNulls(true);
 		if (null == errorMessage) {
 			repository.save(novo);
 		} else {
@@ -89,7 +89,8 @@ public class FuelTypeResource {
 		return Response.status(Response.Status.CREATED).entity("Fueltype inserted with success!").build();
 	}
 
-	@PUT
+	
+	@POST
 	@Path("/fueltype/{id}")
 	@Formatted
 	public Response updateFueltype(@PathParam("id") String id, @QueryParam("name") String name)
@@ -100,7 +101,7 @@ public class FuelTypeResource {
 		}
 		FuelType novo = new FuelType(name);
 		novo.setId(id);
-		String errorMessage = novo.checkNulls();
+		String errorMessage = novo.checkNulls(false);
 		if (null == errorMessage) {
 			novo.setId(id);
 			repository.update(novo);

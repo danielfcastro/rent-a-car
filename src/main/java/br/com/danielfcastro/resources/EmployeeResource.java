@@ -2,6 +2,7 @@ package br.com.danielfcastro.resources;
 
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -20,9 +21,8 @@ import org.jboss.resteasy.annotations.providers.jackson.Formatted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.com.danielfcastro.dao.EmployeeDAO;
 import br.com.danielfcastro.model.Employee;
-import br.com.danielfcastro.qualifier.EmployeeQualifier;
-import br.com.danielfcastro.repository.IRepository;
 
 @Path("/employees")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -31,8 +31,8 @@ public class EmployeeResource {
 	private static final Logger logger = LoggerFactory.getLogger(EmployeeResource.class);
 	private static final String CONTENT_TYPE = "Content-Type";
 
-	@EmployeeQualifier
-	IRepository<Employee> repository;
+	@Inject
+	EmployeeDAO repository;
 
 	@GET
 	@Path("/")
@@ -41,7 +41,7 @@ public class EmployeeResource {
 	public Response getEmployee() {
 		logger.info("Início");
 		Response response = null;
-		List<Employee> entity = repository.query(null);
+		List<Employee> entity = repository.query("Employee.findAll");
 		if (entity.size() != 0) {
 			response = Response.ok().entity(entity).build();
 		} else {
@@ -71,7 +71,7 @@ public class EmployeeResource {
 		return response;
 	}
 
-	@POST
+	@PUT	
 	@Path("/employee/")
 	@Formatted
 	public Response addEmployee(@QueryParam("firstName") String firstName, 
@@ -85,7 +85,7 @@ public class EmployeeResource {
 		logger.info("Início");
 		Employee novo = new Employee(firstName, flagManager, identificationDocument, identificationtYPE,
 				lastName, managerId, middleName);
-		String errorMessage = novo.checkNulls();
+		String errorMessage = novo.checkNulls(true);
 		if (null == errorMessage) {
 			repository.save(novo);
 		} else {
@@ -96,7 +96,7 @@ public class EmployeeResource {
 		return Response.status(Response.Status.CREATED).entity("Employee inserted with success!").build();
 	}
 
-	@PUT
+	@POST
 	@Path("/employee/{id}")
 	@Formatted
 	public Response updateEmployee(@PathParam("id") String id, @QueryParam("firstName") String firstName, 
@@ -114,7 +114,7 @@ public class EmployeeResource {
 		Employee novo = new Employee(firstName, flagManager, identificationDocument, identificationtYPE,
 				lastName, managerId, middleName);
 		novo.setId(id);
-		String errorMessage = novo.checkNulls();
+		String errorMessage = novo.checkNulls(false);
 		if (null == errorMessage) {
 			novo.setId(id);
 			repository.update(novo);

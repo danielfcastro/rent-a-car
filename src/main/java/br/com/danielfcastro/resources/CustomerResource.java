@@ -2,6 +2,7 @@ package br.com.danielfcastro.resources;
 
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -20,9 +21,8 @@ import org.jboss.resteasy.annotations.providers.jackson.Formatted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import br.com.danielfcastro.dao.CustomerDAO;
 import br.com.danielfcastro.model.Customer;
-import br.com.danielfcastro.qualifier.CustomerQualifier;
-import br.com.danielfcastro.repository.IRepository;
 
 @Path("/customers")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -31,8 +31,8 @@ public class CustomerResource {
 	private static final Logger logger = LoggerFactory.getLogger(CustomerResource.class);
 	private static final String CONTENT_TYPE = "Content-Type";
 
-	@CustomerQualifier
-	IRepository<Customer> repository;
+	@Inject
+	CustomerDAO repository;
 
 	@GET
 	@Path("/")
@@ -41,7 +41,7 @@ public class CustomerResource {
 	public Response getCustomer() {
 		logger.info("Início");
 		Response response = null;
-		List<Customer> entity = repository.query(null);
+		List<Customer> entity = repository.query("Customer.findAll");
 		if (entity.size() != 0) {
 			response = Response.ok().entity(entity).build();
 		} else {
@@ -71,7 +71,7 @@ public class CustomerResource {
 		return response;
 	}
 
-	@POST
+	@PUT
 	@Path("/customer/")
 	@Formatted
 	public Response addCustomer(@QueryParam("firstName") String firstName, 
@@ -84,7 +84,7 @@ public class CustomerResource {
 		logger.info("Início");
 		Customer novo = new Customer(firstName, identificationDocument, identiicationType, lastName,
 				middleName, passportNumber);
-		String errorMessage = novo.checkNulls();
+		String errorMessage = novo.checkNulls(true);
 		if (null == errorMessage) {
 			repository.save(novo);
 		} else {
@@ -95,7 +95,8 @@ public class CustomerResource {
 		return Response.status(Response.Status.CREATED).entity("Customer inserted with success!").build();
 	}
 
-	@PUT
+	
+	@POST
 	@Path("/customer/{id}")
 	@Formatted
 	public Response updateCustomer(@PathParam("id") String id, @QueryParam("firstName") String firstName, 
@@ -112,7 +113,7 @@ public class CustomerResource {
 		Customer novo = new Customer(firstName, identificationDocument, identiicationType, lastName,
 				middleName, passportNumber);
 		novo.setId(id);
-		String errorMessage = novo.checkNulls();
+		String errorMessage = novo.checkNulls(false);
 		if (null == errorMessage) {
 			novo.setId(id);
 			repository.update(novo);

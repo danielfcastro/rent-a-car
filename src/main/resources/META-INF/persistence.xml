@@ -4,19 +4,17 @@
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
   http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
 	version="2.1">
-	<persistence-unit name="RentACar-persistence-unit"
+	<persistence-unit name="brasilia-comm-renovafacil"
 		transaction-type="JTA">
 		<description>Forge Persistence Unit</description>
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
-		<jta-data-source>java:jboss/datasources/rentACar</jta-data-source>
+		<jta-data-source>java:jboss/brasilia/daniel/rent-a-car</jta-data-source>
 		<class>br.com.danielfcastro.model.Address</class>
 		<class>br.com.danielfcastro.model.AddressType</class>
 		<class>br.com.danielfcastro.model.Agency</class>
 		<class>br.com.danielfcastro.model.Branch</class>
 		<class>br.com.danielfcastro.model.BrandType</class>
 		<class>br.com.danielfcastro.model.City</class>
-		<class>br.com.danielfcastro.model.CityGeoLoc</class>
-		<class>br.com.danielfcastro.model.CityGeoLocPK</class>
 		<class>br.com.danielfcastro.model.Country</class>
 		<class>br.com.danielfcastro.model.Customer</class>
 		<class>br.com.danielfcastro.model.Employee</class>
